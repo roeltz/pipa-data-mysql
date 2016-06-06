@@ -46,6 +46,8 @@ class MySQLGenerator extends GenericSQLGenerator {
 			return "NULL";
 		elseif (is_object($value))
 			return $this->escapeValue((string) $value);
+		elseif (is_float($value))
+			return number_format($value, 16, ".", "");
 		else
 			return $value;
 	}
