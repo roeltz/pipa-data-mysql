@@ -16,6 +16,7 @@ use Pipa\Data\Exception\DuplicateEntryException;
 use Pipa\Data\Exception\InvalidHostException;
 use Pipa\Data\Exception\QueryException;
 use Pipa\Data\Exception\QuerySyntaxException;
+use Pipa\Data\Exception\UnknownCollectionException;
 use Pipa\Data\Exception\UnknownHostException;
 use Pipa\Data\Exception\UnknownSchemaException;
 use Pipa\Data\JoinableCollection;
@@ -221,6 +222,8 @@ class MySQLDataSource extends AbstractConvenientSQLDataSource implements DataSou
 				return new DuplicateEntryException($message, $code);
 			case 1064:
 				return new QuerySyntaxException($message, $code);
+			case 1146:
+				return new UnknownCollectionException($message, $code);
 			case 1452:
 				return new ConstraintException($message, $code);
 			case 2002:
