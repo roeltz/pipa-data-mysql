@@ -17,6 +17,7 @@
     "require": {
         "php": ">=5.3.0",
 		"pipa/base": "*",
+		"pipa/data": "*",
         "monolog/monolog": "1.3"
     }
 }
