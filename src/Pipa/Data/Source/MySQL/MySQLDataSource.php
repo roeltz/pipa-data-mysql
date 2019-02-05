@@ -162,7 +162,7 @@ class MySQLDataSource extends AbstractConvenientSQLDataSource implements DataSou
 		$this->execute($this->generator->generateInsert($values, $collection));
 		return $this->connection->insert_id;
 	}
-	
+
 	function saveMultiple(array $values, Collection $collection) {
 		$this->execute($this->generator->generateMultipleInsert($values, $collection));
 	}
@@ -182,20 +182,20 @@ class MySQLDataSource extends AbstractConvenientSQLDataSource implements DataSou
 					case self::TYPE_BIGINT:
 					case self::TYPE_YEAR:
 						$value = (int) $value;
-						continue;
+						continue 2;
 					case self::TYPE_DOUBLE:
 					case self::TYPE_FLOAT:
 					case self::TYPE_DECIMAL:
 						$value = (double) $value;
-						continue;
+						continue 2;
 					case self::TYPE_DATE:
 					case self::TYPE_DATETIME:
 					case self::TYPE_TIMESTAMP:
 						$value = new DateTime($value);
-						continue;
+						continue 2;
 					case self::TYPE_TIME:
 						$value = new DateTime("1970-01-01 $value");
-						continue;
+						continue 2;
 				}
 			}
 		}
