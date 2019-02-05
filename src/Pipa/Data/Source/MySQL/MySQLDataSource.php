@@ -7,6 +7,7 @@ use mysqli_result;
 use Pipa\Data\Aggregate;
 use Pipa\Data\Collection;
 use Pipa\Data\Criteria;
+use Pipa\Data\CursorSupport;
 use Pipa\Data\DataSource;
 use Pipa\Data\Exception\AuthException;
 use Pipa\Data\Exception\ConnectionException;
@@ -22,12 +23,14 @@ use Pipa\Data\Exception\UnknownSchemaException;
 use Pipa\Data\JoinableCollection;
 use Pipa\Data\MultipleInsertionSupport;
 use Pipa\Data\RelationalCriteria;
+use Pipa\Data\SQLCursorSupport;
 use Pipa\Data\SQLDataSource;
 use Pipa\Data\TransactionalDataSource;
 use Pipa\Data\Util\AbstractConvenientSQLDataSource;
+use Pipa\Data\Util\CallbackCursor;
 use Psr\Log\LoggerInterface;
 
-class MySQLDataSource extends AbstractConvenientSQLDataSource implements DataSource, TransactionalDataSource, MultipleInsertionSupport {
+class MySQLDataSource extends AbstractConvenientSQLDataSource implements DataSource, TransactionalDataSource, MultipleInsertionSupport, CursorSupport, SQLCursorSupport {
 
 	const TYPE_TINYINT = 1;
 	const TYPE_SMALLINT = 2;
@@ -149,6 +152,34 @@ class MySQLDataSource extends AbstractConvenientSQLDataSource implements DataSou
 			}
 
 			return $items;
+		} else {
+			throw $this->translateException($this->connection->errno, $this->connection->error);
+		}
+	}
+
+	function queryCursor(Criteria $criteria) {
+		return $this->querySQLCursor($this->generator->generateSelect($criteria));
+	}
+
+	function querySQLCursor($sql, array $parameters = null) {
+
+		if ($parameters) $sql = $this->generator->interpolateParameters($sql, $parameters);
+
+		if ($this->logger) {
+			$this->logger->debug("[Cursor] $sql");
+		}
+
+		if ($result = $this->connection->query($sql)) {
+			$types = $this->resolveResultTypes($result);
+
+			return new CallbackCursor(function($eof) use($result, $types){
+				if ($item = $result->fetch_assoc()) {
+					$this->processItem($item, $types);
+					return $item;
+				} else {
+					return $eof;
+				}
+			});
 		} else {
 			throw $this->translateException($this->connection->errno, $this->connection->error);
 		}
