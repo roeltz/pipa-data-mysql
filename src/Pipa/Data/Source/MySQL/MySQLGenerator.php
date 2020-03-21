@@ -35,9 +35,9 @@ class MySQLGenerator extends GenericSQLGenerator {
 		if (is_string($value)) {
 			return "'".$this->dataSource->getConnection()->escape_string($value)."'";
 		} elseif ($value instanceof DateTime) {
-			if ($value->getOffset() != 0) {
+			if ($this->dataSource->serverTimezone) {
 				$value = clone $value;
-				$value->setTimezone(new DateTimeZone("UTC"));
+				$value->setTimezone(new DateTimeZone($this->dataSource->serverTimezone));
 			}
 			return $this->escapeValue($value->format('Y-m-d H:i:s'));
 		} elseif (is_bool($value))

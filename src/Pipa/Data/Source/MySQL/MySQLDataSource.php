@@ -50,12 +50,17 @@ class MySQLDataSource extends AbstractConvenientSQLDataSource implements DataSou
 	const TYPE_VARCHAR = 253;
 	const TYPE_TEXT = 252;
 
+	public $serverTimezone = "UTC";
 	protected $connection;
 	protected $generator;
 	protected $logger;
 
-	function __construct($db, $host, $user, $password) {
+	function __construct($db, $host, $user, $password, array $options = []) {
 		$this->connection = @new mysqli("p:$host", $user, $password, $db);
+
+		if (isset($options["serverTimezone"])) {
+			$this->serverTimezone = $options["serverTimezone"];
+		}
 
 		if (!$this->connection->connect_errno) {
 			$this->generator = new MySQLGenerator($this);
