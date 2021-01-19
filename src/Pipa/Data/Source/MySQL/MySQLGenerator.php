@@ -42,7 +42,12 @@ class MySQLGenerator extends GenericSQLGenerator {
 			return $this->escapeValue($value->format('Y-m-d H:i:s'));
 		} elseif (is_bool($value))
 			return $value ? "TRUE" : "FALSE";
-		elseif (is_null($value))
+		elseif (is_array($value)) {
+			$escaped = join(",", array_map(function($v){
+				return $this->escapeValue($v);
+			}, $value));
+			return "($escaped)";
+		} elseif (is_null($value))
 			return "NULL";
 		elseif (is_object($value))
 			return $this->escapeValue((string) $value);
