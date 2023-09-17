@@ -113,7 +113,7 @@ class MySQLDataSource extends AbstractConvenientSQLDataSource implements DataSou
 
 			return $this->connection->affected_rows;
 		} else {
-			throw $this->translateException($this->connection->errno, $this->connection->error);
+			throw $this->translateException($this->connection->errno, $this->connection->error, $sql);
 		}
 	}
 
@@ -158,7 +158,7 @@ class MySQLDataSource extends AbstractConvenientSQLDataSource implements DataSou
 
 			return $items;
 		} else {
-			throw $this->translateException($this->connection->errno, $this->connection->error);
+			throw $this->translateException($this->connection->errno, $this->connection->error, $sql);
 		}
 	}
 
@@ -186,7 +186,7 @@ class MySQLDataSource extends AbstractConvenientSQLDataSource implements DataSou
 				}
 			});
 		} else {
-			throw $this->translateException($this->connection->errno, $this->connection->error);
+			throw $this->translateException($this->connection->errno, $this->connection->error, $sql);
 		}
 	}
 
@@ -244,9 +244,9 @@ class MySQLDataSource extends AbstractConvenientSQLDataSource implements DataSou
 		return $types;
 	}
 
-	protected function translateException($code, $message) {
+	protected function translateException($code, $message, $sql) {
 		if ($this->logger)
-			$this->logger->error($message);
+			$this->logger->error("$message (SQL: $sql)");
 
 		switch($code) {
 			case 1044:
