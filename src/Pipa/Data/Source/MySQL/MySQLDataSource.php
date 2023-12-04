@@ -105,6 +105,8 @@ class MySQLDataSource extends AbstractConvenientSQLDataSource implements DataSou
 			$start = microtime(true);
 		}
 
+		mysqli_report(MYSQLI_REPORT_OFF);
+
 		if ($this->connection->query($sql)) {
 			if ($this->logger) {
 				$elapsed = microtime(true) - $start;
@@ -142,6 +144,8 @@ class MySQLDataSource extends AbstractConvenientSQLDataSource implements DataSou
 			$start = microtime(true);
 		}
 
+		mysqli_report(MYSQLI_REPORT_OFF);
+
 		if ($result = $this->connection->query($sql)) {
 			$types = $this->resolveResultTypes($result);
 			$items = array();
@@ -173,6 +177,8 @@ class MySQLDataSource extends AbstractConvenientSQLDataSource implements DataSou
 		if ($this->logger) {
 			$this->logger->debug("[Cursor] $sql");
 		}
+
+		mysqli_report(MYSQLI_REPORT_OFF);
 
 		if ($result = $this->connection->query($sql)) {
 			$types = $this->resolveResultTypes($result);
