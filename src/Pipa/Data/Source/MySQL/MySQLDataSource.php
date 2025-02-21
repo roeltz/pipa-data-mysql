@@ -67,7 +67,7 @@ class MySQLDataSource extends AbstractConvenientSQLDataSource implements DataSou
 			$this->connection->set_charset($options["charset"] ?? "utf8mb4");
 			$this->connection->autocommit(true);
 		} else {
-			throw $this->translateException($this->connection->connect_errno, $this->connection->connect_error);
+			throw $this->translateException($this->connection->connect_errno, $this->connection->connect_error, "server=$host;database=$db;uid=$user;");
 		}
 	}
 
